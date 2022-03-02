@@ -90,7 +90,7 @@ class BoardController<T> extends ChangeNotifier {
   }
 
   void loadCells(List<BoardCell<T>> boardCells) {
-    assert(boardCells.length < board.length);
+    assert(boardCells.length <= board.length);
 
     for (var i = 0; i < boardCells.length; i++) {
       final _cell = boardCells[i];
