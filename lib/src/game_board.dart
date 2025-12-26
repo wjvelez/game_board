@@ -8,14 +8,14 @@ typedef CellDecorator<T> = BoxDecoration Function(BoardCell<T>);
 
 class GameBoard<T> extends StatefulWidget {
   const GameBoard({
-    Key? key,
+    super.key,
     required this.controller,
     required this.cellBuilder,
     required this.onCellTap,
     this.initialCells,
     this.cellDecorator,
     this.boardLabels,
-  }) : super(key: key);
+  });
 
   final BoardController<T> controller;
 
@@ -26,7 +26,7 @@ class GameBoard<T> extends StatefulWidget {
   final BoardLabels? boardLabels;
 
   @override
-  _GameBoardState<T> createState() => _GameBoardState<T>();
+  State<GameBoard<T>> createState() => _GameBoardState<T>();
 }
 
 class _GameBoardState<T> extends State<GameBoard<T>> {
@@ -40,28 +40,44 @@ class _GameBoardState<T> extends State<GameBoard<T>> {
     buildBoard();
   }
 
-  buildBoard() {
+  void buildBoard() {
+    hasTopLabels = widget.boardLabels?.top != null;
+    hasLeftLabels = widget.boardLabels?.left != null;
+    hasRightLabels = widget.boardLabels?.right != null;
+    hasBottomLabels = widget.boardLabels?.bottom != null;
     if (widget.initialCells != null) {
       widget.controller.loadCells(widget.initialCells!);
     }
   }
 
-  var horizontalBorderSize = kToolbarHeight;
+  double getCellWidth(BoxConstraints constraints) {
+    double labelsWidth;
+    if (hasLeftLabels && hasRightLabels) {
+      labelsWidth = maxLabelWidth * 2;
+    } else if (!hasLeftLabels && !hasRightLabels) {
+      labelsWidth = 0;
+    } else {
+      labelsWidth = maxLabelWidth;
+    }
+    final minConstrains = min(constraints.minWidth, constraints.minHeight);
+    final minSize = minConstrains - (2 * boardPadding);
+    final cellWidth = ((minSize - labelsWidth) / widget.controller.rows) - 2;
+
+    return cellWidth;
+  }
+
+  late bool hasTopLabels;
+  late bool hasLeftLabels;
+  late bool hasRightLabels;
+  late bool hasBottomLabels;
+
+  final boardPadding = 12.0;
+  final maxLabelWidth = 24.0;
 
   @override
   Widget build(BuildContext context) {
-    final hasTopLabels = widget.boardLabels?.top != null;
-    final hasLeftLabels = widget.boardLabels?.left != null;
-    final hasRightLabels = widget.boardLabels?.right != null;
-    final hasBottomLabels = widget.boardLabels?.bottom != null;
-
-    if (hasLeftLabels && hasRightLabels) {
-      horizontalBorderSize = kToolbarHeight / 2;
-    } else if (!hasLeftLabels && !hasRightLabels) {
-      horizontalBorderSize = 0;
-    } else {
-      horizontalBorderSize = 0;
-    }
+    final rows = widget.controller.rows;
+    final columns = widget.controller.rows;
 
     return BoardControllerInheritedWidget<T>(
       controller: widget.controller,
@@ -70,63 +86,60 @@ class _GameBoardState<T> extends State<GameBoard<T>> {
           builder: (context, _) {
             return LayoutBuilder(
               builder: (context, constraints) {
-                final rows = widget.controller.rows;
-                final columns = widget.controller.rows;
-                final minSize = min(constraints.minWidth, constraints.minHeight);
-                final cellWidth = ((minSize - horizontalBorderSize) / rows) - 2;
-
+                final cellWidth = getCellWidth(constraints);
                 return Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      if (hasTopLabels)
-                        ColumnLabels(
-                          cellSize: cellWidth,
-                          rows: rows,
-                          labelBuilder: widget.boardLabels!.top!,
-                          hasLeftLabels: hasLeftLabels,
-                          hasRightabels: hasRightLabels,
-                        ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (hasLeftLabels)
-                            Expanded(
-                              child: RowLabels(
-                                cellSize: cellWidth,
-                                columns: columns,
-                                labelBuilder: widget.boardLabels!.left!,
-                                width: kTextTabBarHeight / (hasRightLabels ? 2 : 1),
-                              ),
-                            ),
-                          Board(
-                            cellHeight: cellWidth,
-                            cellBuilder: widget.cellBuilder,
-                            onCellTap: widget.onCellTap,
-                            controller: widget.controller,
-                            cellDecorator: widget.cellDecorator,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: boardPadding),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (hasTopLabels)
+                          ColumnLabels(
+                            cellSize: cellWidth,
+                            rows: rows,
+                            labelBuilder: widget.boardLabels!.top!,
+                            hasLeftLabels: hasLeftLabels,
+                            hasRighlabels: hasRightLabels,
                           ),
-                          if (hasRightLabels)
-                            Expanded(
-                              child: RowLabels(
-                                cellSize: cellWidth,
-                                columns: columns,
-                                labelBuilder: widget.boardLabels!.right!,
-                                width: kTextTabBarHeight / (hasLeftLabels ? 2 : 1),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (hasLeftLabels)
+                              Expanded(
+                                child: RowLabels(
+                                  cellSize: cellWidth,
+                                  columns: columns,
+                                  labelBuilder: widget.boardLabels!.left!,
+                                ),
                               ),
+                            Board(
+                              cellHeight: cellWidth,
+                              cellBuilder: widget.cellBuilder,
+                              onCellTap: widget.onCellTap,
+                              controller: widget.controller,
+                              cellDecorator: widget.cellDecorator,
                             ),
-                        ],
-                      ),
-                      if (hasBottomLabels)
-                        ColumnLabels(
-                          cellSize: cellWidth,
-                          rows: rows,
-                          labelBuilder: widget.boardLabels!.bottom!,
-                          hasLeftLabels: hasLeftLabels,
-                          hasRightabels: hasRightLabels,
+                            if (hasRightLabels)
+                              Expanded(
+                                child: RowLabels(
+                                  cellSize: cellWidth,
+                                  columns: columns,
+                                  labelBuilder: widget.boardLabels!.right!,
+                                ),
+                              ),
+                          ],
                         ),
-                    ],
+                        if (hasBottomLabels)
+                          ColumnLabels(
+                            cellSize: cellWidth,
+                            rows: rows,
+                            labelBuilder: widget.boardLabels!.bottom!,
+                            hasLeftLabels: hasLeftLabels,
+                            hasRighlabels: hasRightLabels,
+                          ),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -154,13 +167,10 @@ class BoardLabels {
 
 class BoardControllerInheritedWidget<T> extends InheritedWidget {
   const BoardControllerInheritedWidget({
-    Key? key,
-    required Widget child,
+    super.key,
+    required super.child,
     required this.controller,
-  }) : super(
-          key: key,
-          child: child,
-        );
+  });
 
   final BoardController<T> controller;
 

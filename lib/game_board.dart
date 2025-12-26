@@ -1,4 +1,4 @@
-library game_board;
+library;
 
 export './src/board_controller.dart';
 export './src/board.dart';

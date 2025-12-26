@@ -11,9 +11,9 @@ extension BoardExtension<T> on BoardCell<T> {
 
   bool areNeighbors(BoardCell<T> cell) {
     if (sameCell(cell)) return false;
-    final _hasHorizontalNeighbors = isLeftNeighbor(cell) || isRightNeighbor(cell);
-    final _hasVerticalNeighbors = isTopNeighbor(cell) || isBottomNeighbor(cell);
-    return _hasHorizontalNeighbors || _hasVerticalNeighbors;
+    final hasHorizontalNeighbors = isLeftNeighbor(cell) || isRightNeighbor(cell);
+    final hasVerticalNeighbors = isTopNeighbor(cell) || isBottomNeighbor(cell);
+    return hasHorizontalNeighbors || hasVerticalNeighbors;
   }
 
   bool isLeftNeighbor(BoardCell<T> cell) {

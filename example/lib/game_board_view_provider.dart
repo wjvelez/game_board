@@ -45,8 +45,6 @@ class GameBoardViewProvider extends ChangeNotifier {
   int cellValue(BoardCell<int> cell) => totalCells * cell.rowIndex + cell.columnIndex;
 
   void selectCell(BoardCell<int> cell) {
-    print('cell tapped $cell');
-
     if (!_selectedCell.sameCell(cell)) {
       // _selectedCell = _selectedCell.select(false);
       _selectedCell = cell.select(true);
@@ -66,13 +64,13 @@ class GameBoardViewProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  final _filledCells = <BoardCell<int>>[];
-  List<BoardCell<int>> get filledCells => _filledCells;
+  // final _filledCells = <BoardCell<int>>[];
+  // List<BoardCell<int>> get filledCells => _filledCells;
 
   void fillWithValue(int value) {
     for (var i = 0; i < boardController.board.length; i++) {
-      final _cell = boardController.board[i];
-      boardController.board[i] = _cell.copyWith(
+      final cell = boardController.board[i];
+      boardController.board[i] = cell.copyWith(
         data: value,
       );
     }
@@ -81,30 +79,11 @@ class GameBoardViewProvider extends ChangeNotifier {
 
   void fillRamdon() {
     for (var i = 0; i < boardController.board.length; i++) {
-      final _value = Random().nextInt(boardController.totalCells);
-      final _cell = boardController.board[i];
-      boardController.board[i] = _cell.copyWith(
-        data: _value,
+      final value = Random().nextInt(boardController.totalCells);
+      final cell = boardController.board[i];
+      boardController.board[i] = cell.copyWith(
+        data: value,
       );
-    }
-    notifyListeners();
-  }
-
-  void addZero(int rowIndex, int columnIndex) {}
-
-  void updateValue(int rowIndex, int columnIndex, int value) {
-    final _cell = BoardCell<int>(
-      columnIndex: columnIndex,
-      rowIndex: rowIndex,
-      data: value,
-    );
-    final _index = _filledCells.indexWhere(
-      (e) => e.sameCell(_cell),
-    );
-    if (_index == -1) {
-      _filledCells.add(_cell);
-    } else {
-      _filledCells[_index] = _cell;
     }
     notifyListeners();
   }
@@ -121,8 +100,6 @@ extension BoardTypeExtension on DemoBoardType {
         return 10;
       case DemoBoardType.twelve:
         return 12;
-      case DemoBoardType.forthteen:
-        return 14;
       default:
         return 4;
     }

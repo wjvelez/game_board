@@ -36,21 +36,21 @@ class BoardController<T> extends ChangeNotifier {
   void initializeCells() {
     for (var i = 0; i < totalRows; i++) {
       for (var j = 0; j < totalColumns; j++) {
-        final _cell = BoardCell<T>(
+        final cell = BoardCell<T>(
           rowIndex: i,
           columnIndex: j,
         );
-        board.add(_cell);
+        board.add(cell);
       }
     }
   }
 
   void selectedCell(int row, int column) {
-    final _cell = getBoardCell(row, column);
-    final _index = _board.indexWhere((e) => e.sameCell(_cell));
-    if (_index != -1) {
-      _board[_index] = _cell.select(
-        !_cell.isSelected,
+    final cell = getBoardCell(row, column);
+    final index = _board.indexWhere((e) => e.sameCell(cell));
+    if (index != -1) {
+      _board[index] = cell.select(
+        !cell.isSelected,
       );
     }
   }
@@ -58,11 +58,11 @@ class BoardController<T> extends ChangeNotifier {
   int cellValue(BoardCell<int> cell) => totalCells * cell.rowIndex + cell.columnIndex;
 
   void updateCell(int row, int column, BoardCell<T> cell) {
-    final _oldCell = getBoardCell(row, column);
-    if (cell.sameCell(_oldCell)) {
-      final _index = _board.indexWhere((e) => e.sameCell(_oldCell));
-      if (_index != -1) {
-        _board[_index] = cell;
+    final oldCell = getBoardCell(row, column);
+    if (cell.sameCell(oldCell)) {
+      final index = _board.indexWhere((e) => e.sameCell(oldCell));
+      if (index != -1) {
+        _board[index] = cell;
         notifyListeners();
       }
     }
@@ -93,10 +93,10 @@ class BoardController<T> extends ChangeNotifier {
     assert(boardCells.length <= board.length);
 
     for (var i = 0; i < boardCells.length; i++) {
-      final _cell = boardCells[i];
-      final _index = board.indexWhere((e) => e.sameCell(_cell));
-      if (_index != -1) {
-        board[_index] = _cell;
+      final cell = boardCells[i];
+      final index = board.indexWhere((e) => e.sameCell(cell));
+      if (index != -1) {
+        board[index] = cell;
       }
     }
     notifyListeners();
@@ -119,9 +119,9 @@ class BoardController<T> extends ChangeNotifier {
     BoardCell<T> cell2,
   ) {
     if (cell1.sameCell(cell2)) return false;
-    final _horizontalNeighbors = areHorizontalNeighbors(cell1, cell2);
-    final _verticalNeighbors = areVerticalNeighbors(cell1, cell2);
-    return _horizontalNeighbors || _verticalNeighbors;
+    final horizontalNeighbors = areHorizontalNeighbors(cell1, cell2);
+    final verticalNeighbors = areVerticalNeighbors(cell1, cell2);
+    return horizontalNeighbors || verticalNeighbors;
   }
 
   bool areHorizontalNeighbors(
@@ -129,8 +129,8 @@ class BoardController<T> extends ChangeNotifier {
     BoardCell<T> cell2,
   ) {
     if (cell1.sameCell(cell2)) return false;
-    final _delta = (cell1.columnIndex - cell2.columnIndex).abs();
-    return _delta == 1;
+    final delta = (cell1.columnIndex - cell2.columnIndex).abs();
+    return delta == 1;
   }
 
   bool areVerticalNeighbors(
@@ -138,8 +138,8 @@ class BoardController<T> extends ChangeNotifier {
     BoardCell<T> cell2,
   ) {
     if (cell1.sameCell(cell2)) return false;
-    final _delta = (cell1.rowIndex - cell2.rowIndex).abs();
-    return _delta == 1;
+    final delta = (cell1.rowIndex - cell2.rowIndex).abs();
+    return delta == 1;
   }
 
   List<BoardCell<T>> getHorizontalNeighbors(BoardCell<T> cell) {

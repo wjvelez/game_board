@@ -3,13 +3,13 @@ import 'package:game_board/game_board.dart';
 
 class Board<T> extends StatelessWidget {
   const Board({
-    Key? key,
+    super.key,
     required this.cellHeight,
     required this.cellBuilder,
     required this.onCellTap,
     required this.controller,
     this.cellDecorator,
-  }) : super(key: key);
+  });
 
   final double cellHeight;
 
@@ -22,6 +22,7 @@ class Board<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final rows = controller.rows;
     final columns = controller.columns;
+
     return Center(
       child: Container(
         decoration: BoxDecoration(
@@ -57,11 +58,13 @@ class Board<T> extends StatelessWidget {
                                     color: Colors.white,
                                   ),
                                 ),
-                          child: Center(
-                            child: cellBuilder(
-                              controller.getBoardCell(i, j),
-                            ),
-                          ),
+                          child: controller.getBoardCell(i, j).data == null
+                              ? const SizedBox.shrink()
+                              : Center(
+                                  child: cellBuilder(
+                                    controller.getBoardCell(i, j),
+                                  ),
+                                ),
                         ),
                       ),
                   ],

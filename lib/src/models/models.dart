@@ -1,3 +1,3 @@
-library models;
+library;
 
 export './board_cell.dart';

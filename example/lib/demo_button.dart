@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class DemoButton extends StatelessWidget {
   const DemoButton({
-    Key? key,
+    super.key,
     required this.label,
     required this.onTap,
     this.color,
     this.textStyle,
     this.size,
-  }) : super(key: key);
+  });
 
   final String label;
   final TextStyle? textStyle;
@@ -18,14 +18,10 @@ class DemoButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
+    return FilledButton(
       onPressed: onTap,
       child: Text(
         label,
-        style: textStyle ??
-            Theme.of(context).textTheme.headline6!.copyWith(
-                  color: Theme.of(context).primaryIconTheme.color,
-                ),
       ),
     );
   }

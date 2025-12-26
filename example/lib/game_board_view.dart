@@ -46,6 +46,8 @@ class GameBoardView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Game Board demo'),
+        backgroundColor: Colors.deepPurple,
+        titleTextStyle: Theme.of(context).primaryTextTheme.headlineSmall,
       ),
       backgroundColor: Colors.green[500]!,
       body: SafeArea(
@@ -90,35 +92,30 @@ class GameBoardView extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: Container(
-                  // color: Colors.red,
-                  padding: const EdgeInsets.all(12),
-                  height: bodyHeight * 1,
-                  child: GameBoard<int>(
-                    controller: provider.boardController,
-                    onCellTap: provider.selectCell,
-                    cellBuilder: (boardCell) {
-                      return DemoCell(
-                        rowIndex: boardCell.rowIndex,
-                        columnIndex: boardCell.columnIndex,
-                      );
-                    },
-                    boardLabels: BoardLabels(
-                      top: (i) => Center(
-                        child: Text(columnLabels(i)),
+                child: GameBoard<int>(
+                  controller: provider.boardController,
+                  onCellTap: provider.selectCell,
+                  cellBuilder: (boardCell) {
+                    return DemoCell(
+                      rowIndex: boardCell.rowIndex,
+                      columnIndex: boardCell.columnIndex,
+                    );
+                  },
+                  boardLabels: BoardLabels(
+                    top: (i) => Center(
+                      child: Text(columnLabels(i)),
+                    ),
+                    left: (i) => Center(
+                      child: Text('${i + 1}'),
+                    ),
+                    right: (i) => Center(
+                      child: FittedBox(
+                        child: Text('${sumRow(context, i)}'),
                       ),
-                      left: (i) => Center(
-                        child: Text('${i + 1}'),
-                      ),
-                      right: (i) => Center(
-                        child: Text(
-                          '${sumRow(context, i)}',
-                        ),
-                      ),
-                      bottom: (i) => Center(
-                        child: Text(
-                          '${sumColumn(context, i)}',
-                        ),
+                    ),
+                    bottom: (i) => Center(
+                      child: FittedBox(
+                        child: Text('${sumColumn(context, i)}'),
                       ),
                     ),
                   ),

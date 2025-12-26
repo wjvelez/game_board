@@ -4,5 +4,4 @@ enum DemoBoardType {
   eight,
   ten,
   twelve,
-  forthteen,
 }
